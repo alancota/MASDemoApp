@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     //
     public void startMAS(View v) {
 
+        MAS.debug();
         //This will start MAS with the default configuration
         MAS.start(mContext,true);
 
@@ -125,9 +126,56 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //
+    // User Logout
+    //
+    public void userLogout(View v) {
+
+        MASUser.getCurrentUser().logout(new MASCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                showMessage("User successfully logged out",1);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                showMessage("Error during user logout: " + e.getLocalizedMessage(),1);
+            }
+        });
+
+    }
+
+    //
+    // De-register the device
+    //
+    public void deregDevice(View v) {
+
+
+
+        MASDevice.getCurrentDevice().resetLocally();
+        MASDevice.getCurrentDevice().deregister(new MASCallback<Void>() {
+            @Override
+            public void onSuccess(Void object) {
+                //The device is successfully de-registered.
+                showMessage("The device has been de-registered!",1);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                showMessage("Error during device de-registration: "+ e.getLocalizedMessage(),1);
+            }
+        });
+
+    }
+
+    //
+    // Uses MAS SDK to call a protected endpoint on the CA API Gateway
+    //
     public void callAPI(View v) {
 
+        //Endpoint (API) to be called
         String path = "/protected/resource/products";
+
         Uri.Builder uriBuilder = new Uri.Builder().encodedPath(path);
         uriBuilder.appendQueryParameter("operation", "listProducts");
         uriBuilder.appendQueryParameter("pName2", "pValue2");
